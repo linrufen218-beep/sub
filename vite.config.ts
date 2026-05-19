@@ -8,6 +8,9 @@ export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
   return {
     base: '/sub/',
+    build: {
+      outDir: 'docs',
+    },
     plugins: [
       react(), 
       tailwindcss(),

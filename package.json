@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
-    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
+    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=docs/server.cjs",
     "preview": "vite preview",
-    "start": "node dist/server.cjs",
-    "clean": "rm -rf dist server.js",
+    "start": "node docs/server.cjs",
+    "clean": "rm -rf docs server.js",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
