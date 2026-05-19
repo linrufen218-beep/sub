@@ -1,0 +1,6 @@
+{
+  "name": "潜意识音频工坊",
+  "description": "生成并处理潜意识肯定语句音频信号的极客级浏览器端工坊",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

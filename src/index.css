@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "ChenyuLuoyan";
+  src:
+    url("/fonts/ChenYuluoyan-2.0-Thin.ttf") format("truetype"),
+    local("辰宇落雁體"),
+    local("辰宇落雁体"),
+    local("ChenyuLuoyan"),
+    local("Chenyu Luoyan"),
+    local("辰宇落雁");
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "ChenyuLuoyan", "辰宇落雁體", "辰宇落雁体", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "ChenyuLuoyan", "辰宇落雁體", "辰宇落雁体", ui-monospace, monospace;
+}
+
+:root {
+  --accent: #005599;
+  --miffy-yellow: #ffc809;
+  --miffy-green: #01712a;
+  --miffy-orange: #f6861a;
+  --bg-dark: #ffffff;
+  --panel: #ffffff;
+  --border: #b9c0c8;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--bg-dark);
+}
+
+.step-lock { opacity: 0.4; pointer-events: none; transition: opacity 0.3s ease; }
+.active-step { opacity: 1; pointer-events: auto; }
+.glass {
+  background-color: rgba(255, 255, 255, 0.92);
+  background-image: radial-gradient(rgba(122, 131, 141, 0.14) 0.8px, transparent 0.8px);
+  background-size: 12px 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  box-shadow: 1px 1px 0 rgba(31, 41, 55, 0.08);
+}
+.input-box {
+  background-color: #ffffff;
+  background-image: repeating-linear-gradient(0deg, transparent 0, transparent 20px, rgba(148, 163, 184, 0.15) 21px);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-main);
+  box-shadow: 1px 1px 0 rgba(31, 41, 55, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.65);
+}
+.input-box::placeholder { color: #a3a99d; }
+.paper-bg {
+  background-color: #ffffff;
+  background-image: radial-gradient(rgba(112, 121, 132, 0.11) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+.paper-dots {
+  background-color: #ffffff;
+  background-image: radial-gradient(rgba(112, 121, 132, 0.12) 0.9px, transparent 0.9px);
+  background-size: 14px 14px;
+}
+.paper-stripes {
+  background-color: #ffffff;
+  background-image: repeating-linear-gradient(0deg, transparent 0, transparent 22px, rgba(148, 163, 184, 0.13) 23px);
+}
+.sketch-border {
+  border-color: var(--border) !important;
+  box-shadow: 1.5px 1.5px 0 rgba(31, 41, 55, 0.09);
+  position: relative;
+}
+.sketch-border::after {
+  content: "";
+  position: absolute;
+  inset: 2px -2px -2px 2px;
+  border: 1px solid rgba(107, 114, 128, 0.34);
+  border-radius: inherit;
+  pointer-events: none;
+  transform: rotate(-0.25deg);
+}
+button, input, textarea, select {
+  font-family: inherit;
+  letter-spacing: 0.02em;
+}
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+select {
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+button.sketch-border,
+.sketch-border button,
+.sketch-border select,
+.sketch-border label,
+.sketch-border span {
+  align-items: center;
+}
+.input-box:not(textarea) {
+  line-height: 1;
+}
+.knob-segment { width: 4px; height: 12px; background: #30363d; margin: 0 1px; border-radius: 1px; }
+.knob-active { background: var(--accent); }
+.neon-text { text-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+.led-pulse { animation: pulse 2s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(31, 41, 55, 0.04);
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5c0;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent); 
+}
+
+@layer utilities {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+}
