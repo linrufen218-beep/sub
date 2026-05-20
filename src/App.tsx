@@ -328,7 +328,7 @@ export default function App() {
  const [density, setDensity] = useState<Density>('mid');
  const [tense, setTense] = useState<Tense>('mixed');
  const [isGenerating, setIsGenerating] = useState(false);
- const [aiEndpoint, setAiEndpoint] = useState(() => localStorage.getItem('subliminal_ai_endpoint') || '');
+ const [aiEndpoint, setAiEndpoint] = useState(() => localStorage.getItem('subliminal_ai_endpoint') || (import.meta as any).env?.VITE_WORKER_URL || '');
  const [aiApiKey, setAiApiKey] = useState(() => localStorage.getItem('subliminal_ai_api_key') || '');
  const [aiModel, setAiModel] = useState(() => localStorage.getItem('subliminal_ai_model') || 'gemini-2.5-flash');
  
@@ -532,8 +532,9 @@ export default function App() {
  const textToAudioBuffer = async (text: string, rate: number, ctx: BaseAudioContext): Promise<AudioBuffer> => {
  // Attempt to use our backend proxy for TTS to bypass CORS
  try {
- const url = `/api/tts?text=${encodeURIComponent(text.substring(0, 200))}`;
- const response = await fetch(url);
+ const baseUrl = aiEndpoint.trim() ? aiEndpoint.trim().replace(/\/+$/, '') : '';
+const url = `${baseUrl}/api/tts?text=${encodeURIComponent(text.substring(0, 200))}`;
+const response = await fetch(url);
  if (!response.ok) throw new Error("TTS Network error");
  const arrayBuf = await response.arrayBuffer();
  return await ctx.decodeAudioData(arrayBuf);
