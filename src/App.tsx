@@ -991,6 +991,29 @@ const response = await fetch(url);
  </button>
  </div>
 
+ {(import.meta as any).env?.VITE_WORKER_URL ? (
+ <>
+ <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+ <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+ <span className="text-green-700 text-sm">
+ 已自動配置 Worker：<span className="font-mono text-xs">{(import.meta as any).env.VITE_WORKER_URL}</span>
+ </span>
+ </div>
+ <div className="text-slate-500 leading-relaxed paper-stripes border border-[#b9c0c8] rounded-lg p-3">
+ 目前透過 <span className="text-[#005599] font-mono text-sm">VITE_WORKER_URL</span> 環境變數自動連接 Worker，無需手動設定。如需使用其他 Worker，請在下方輸入自訂連結。
+ </div>
+ <label className="block space-y-1.5">
+ <span className="text-slate-700 flex items-center text-sm">自訂 Worker 連結（留空則使用預設）</span>
+ <input
+ value={aiEndpoint}
+ onChange={(e) => setAiEndpoint(e.target.value)}
+ className="w-full h-10 px-3 input-box outline-none focus:border-[#005599]"
+ placeholder="留空 = 使用 VITE_WORKER_URL"
+ />
+ </label>
+ </>
+ ) : (
+ <>
  <label className="block space-y-1.5">
  <span className="text-slate-700 flex items-center">Worker 連結</span>
  <input
@@ -1012,8 +1035,14 @@ const response = await fetch(url);
  />
  </label>
 
+ <div className="text-slate-500 leading-relaxed paper-stripes border border-[#b9c0c8] rounded-lg p-3">
+ 留空 Worker 連結時會使用本地介面。填寫後，請確保 Worker 返回 JSON：<span className="text-[#005599]">{"{ affirmations: \"...\" }"}</span>
+ </div>
+ </>
+ )}
+
  <label className="block space-y-1.5">
- <span className="text-slate-700 flex items-center">模型名稱</span>
+ <span className="text-slate-700 flex items-center text-sm">模型名稱</span>
  <input
  value={aiModel}
  onChange={(e) => setAiModel(e.target.value)}
@@ -1021,10 +1050,6 @@ const response = await fetch(url);
  placeholder="gemini-2.5-flash"
  />
  </label>
-
- <div className="text-slate-500 leading-relaxed paper-stripes border border-[#b9c0c8] rounded-lg p-3">
- 留空 Worker 連結時會使用本地介面。填寫後，請確保 Worker 返回 JSON：<span className="text-[#005599]">{"{ affirmations: \"...\" }"}</span>
- </div>
 
  <div className="grid grid-cols-2 gap-2">
  <button

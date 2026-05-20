@@ -3,13 +3,19 @@
 @font-face {
   font-family: "ChenyuLuoyan";
   src:
-    url("/fonts/ChenYuluoyan-2.0-Thin.ttf") format("truetype"),
-    local("辰宇落雁體"),
-    local("辰宇落雁体"),
-    local("ChenyuLuoyan"),
-    local("Chenyu Luoyan"),
-    local("辰宇落雁");
-  font-display: optional;
+    url("/fonts/ChenYuluoyan-2.0-Thin.subset.woff2") format("woff2"),
+    url("/fonts/ChenYuluoyan-2.0-Thin.subset.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 200;
+}
+
+@font-face {
+  font-family: "ChenyuLuoyan";
+  src:
+    url("/fonts/ChenYuluoyan-2.0-Thin.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 200;
+  unicode-range: U+0-10FFFF;
 }
 
 @theme {
