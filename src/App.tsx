@@ -951,7 +951,7 @@ const response = await fetch(url);
  <div className="flex items-center gap-2">
  <span className="w-10 h-10 rounded-lg bg-white border border-[#b9c0c8] flex items-center justify-center overflow-hidden sketch-border">
  <img
- src="/logo.png"
+ src="/sub/logo.png"
  alt="潛意識音頻"
  className="h-full w-full object-cover"
  draggable="false"
@@ -975,7 +975,7 @@ const response = await fetch(url);
  <div className="flex items-center justify-between gap-3">
  <div className="flex items-center gap-2">
  <span className="w-8 h-8 rounded-lg bg-white border border-[#b9c0c8] flex items-center justify-center overflow-hidden sketch-border">
- <img src="/logo.png" alt="" className="h-full w-full object-cover" draggable="false" />
+ <img src="/sub/logo.png" alt="" className="h-full w-full object-cover" draggable="false" />
  </span>
  <div>
  <h2 className="text-slate-900 leading-none">AI 設定</h2>
