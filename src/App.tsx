@@ -492,7 +492,7 @@ export default function App() {
  setIsGenerating(true);
  try {
  const customEndpoint = aiEndpoint.trim();
- const targetUrl = customEndpoint || '/api/generate-affirmations';
+ const targetUrl = customEndpoint ? `${customEndpoint.replace(/\/+$/, '')}/api/generate-affirmations` : '/api/generate-affirmations';
  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
  if (customEndpoint && aiApiKey.trim()) {
  headers.Authorization = `Bearer ${aiApiKey.trim()}`;
