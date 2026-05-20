@@ -4,9 +4,10 @@ compatibility_date = "2024-12-01"
 
 # --- Environment Variables (明文变量) ---
 [vars]
-# GEMINI_MODEL = "gemini-2.5-flash"
+# AI_MODEL = "Pro/deepseek-ai/DeepSeek-V3.2"  # 模型名称
+# AI_BASE_URL = "https://api.siliconflow.cn/v1"  # OpenAI 兼容 API 地址 (填此值则不再使用 Gemini)
 # CLIENT_API_KEY = "your-client-side-api-key"
-# PROXY_HOST = "your-reverse-proxy.com"  # 优选IP/反代域名
+# PROXY_HOST = "your-reverse-proxy.com"  # 优选IP/反代域名 (仅 Gemini 模式有效)
 
 # --- Secrets (通过 wrangler secret 设置) ---
-# GEMINI_API_KEY = "your-gemini-api-key-here"
+# GEMINI_API_KEY = "your-api-key-here"  # Gemini API Key 或 OpenAI 兼容 API 的 Bearer Token

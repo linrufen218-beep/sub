@@ -39,6 +39,62 @@ function buildPrompt({ topic, density, tense }) {
 请立即开始生成：`;
 }
 
+async function callOpenAICompatible(apiBase, apiKey, model, prompt) {
+  const baseUrl = apiBase.replace(/\/+$/, '');
+  const url = `${baseUrl}/chat/completions`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model,
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 4096,
+      temperature: 0.7,
+    }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    return { error: 'AI request failed', detail: data, status: res.status };
+  }
+  const text = data.choices?.[0]?.message?.content || '';
+  return { text: text.trim() };
+}
+
+async function callGemini(apiKey, model, prompt, proxyHost) {
+  let url;
+  if (proxyHost) {
+    const protocol = proxyHost.startsWith('http') ? '' : 'https://';
+    url = `${protocol}${proxyHost}/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+  } else {
+    url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+  }
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey,
+    },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+    }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    return { error: 'Gemini request failed', detail: data, status: res.status };
+  }
+  const text = data.candidates?.[0]?.content?.parts
+    ?.map((part) => part.text || '')
+    .join('')
+    .trim();
+  if (!text) {
+    return { error: 'Gemini returned empty text', detail: data, status: 502 };
+  }
+  return { text };
+}
+
 async function handleGenerate(request, env) {
   const authHeader = request.headers.get('Authorization') || '';
   const clientKey = request.headers.get('x-api-key') || authHeader.replace(/^Bearer\s+/i, '');
@@ -63,52 +119,29 @@ async function handleGenerate(request, env) {
     return json({ error: 'Missing GEMINI_API_KEY secret' }, 500);
   }
 
-  const model = String(body.model || env.GEMINI_MODEL || 'gemini-2.5-flash').trim();
+  const model = String(body.model || env.AI_MODEL || 'gemini-2.5-flash').trim();
   const prompt = buildPrompt({
     topic,
     density: body.density,
     tense: body.tense,
   });
 
-  // Preferred IP / Reverse Proxy Support
-  // If PROXY_HOST is set (e.g. "your-proxy.com"), route Gemini API through it
-  const proxyHost = env.PROXY_HOST || '';
-  let geminiUrl;
-  if (proxyHost) {
-    // Use the proxy host for the Gemini API endpoint
-    // The proxy server should forward requests to generativelanguage.googleapis.com
-    const protocol = proxyHost.startsWith('http') ? '' : 'https://';
-    geminiUrl = `${protocol}${proxyHost}/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+  const aiBaseUrl = (env.AI_BASE_URL || '').trim();
+
+  let result;
+  if (aiBaseUrl) {
+    // Use OpenAI-compatible API (e.g., SiliconFlow, OpenAI, etc.)
+    result = await callOpenAICompatible(aiBaseUrl, providerKey, model, prompt);
   } else {
-    geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+    // Use Gemini API (with optional proxy host)
+    result = await callGemini(providerKey, model, prompt, env.PROXY_HOST || '');
   }
 
-  const geminiRes = await fetch(geminiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-goog-api-key': providerKey,
-    },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-    }),
-  });
-
-  const geminiData = await geminiRes.json();
-  if (!geminiRes.ok) {
-    return json({ error: 'Gemini request failed', detail: geminiData }, geminiRes.status);
+  if (result.error) {
+    return json({ error: result.error, detail: result.detail }, result.status || 502);
   }
 
-  const affirmations = geminiData.candidates?.[0]?.content?.parts
-    ?.map((part) => part.text || '')
-    .join('')
-    .trim();
-
-  if (!affirmations) {
-    return json({ error: 'Gemini returned empty text', detail: geminiData }, 502);
-  }
-
-  return json({ affirmations });
+  return json({ affirmations: result.text });
 }
 
 async function handleTTS(request, env) {
@@ -166,8 +199,9 @@ export default {
       return json({
         status: 'ok',
         name: 'subliminal-worker',
-        version: '2.0',
+        version: '2.1',
         hasGeminiKey: !!env.GEMINI_API_KEY,
+        aiBackend: (env.AI_BASE_URL || '').trim() ? 'openai-compatible' : 'gemini',
         hasProxyHost: !!env.PROXY_HOST,
       });
     }
